@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "YT Search Pro",
+  "version": "0.2.1",
+  "description": "Precise YouTube retrieval across channels you already trust.",
+  "action": {
+    "default_title": "YT Search Pro",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "permissions": ["identity", "storage", "alarms", "notifications"],
+  "host_permissions": [
+    "https://www.googleapis.com/*",
+    "https://a0579f36-409d-4c94-aed6-476395636419-00-2uej4sz8kg035.pike.replit.dev/*"
+  ]
+}

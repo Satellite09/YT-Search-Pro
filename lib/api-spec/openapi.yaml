@@ -1,0 +1,116 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: oauth
+    description: Browser extension OAuth operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /oauth/google/start:
+    get:
+      operationId: startGoogleOAuth
+      tags: [oauth]
+      summary: Start Google OAuth
+      parameters:
+        - name: extension_redirect
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        "302":
+          description: Redirect to Google authorization
+  /oauth/google/callback:
+    get:
+      operationId: completeGoogleOAuth
+      tags: [oauth]
+      summary: Complete Google OAuth
+      parameters:
+        - name: code
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: error
+          in: query
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirect to the extension with a one-time ticket
+  /oauth/google/exchange:
+    post:
+      operationId: exchangeGoogleOAuthTicket
+      tags: [oauth]
+      summary: Exchange a one-time ticket for a Google access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OAuthTicketInput"
+      responses:
+        "200":
+          description: Access token issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthToken"
+        "400":
+          description: Invalid or expired ticket
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    OAuthTicketInput:
+      type: object
+      properties:
+        ticket:
+          type: string
+          minLength: 20
+      required:
+        - ticket
+    OAuthToken:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+        scope:
+          type: string
+      required:
+        - accessToken
+        - expiresIn
+        - scope
+

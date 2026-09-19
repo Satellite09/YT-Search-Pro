@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "YT Search Pro"
+description = "A Chrome extension interface for precise YouTube retrieval across subscribed channels, with a local rolling index, date and creator-country filters, saved searches, and explicit index and failure states."
+version = "1.0.0"
+id = "artifacts/yt-search-pro"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25298
+
+[services.development]
+run = "pnpm --filter @workspace/yt-search-pro run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/yt-search-pro", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/yt-search-pro/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25298"
+BASE_PATH = "/"
